@@ -17,26 +17,30 @@ class Solution {
    public:
     // Traversal Order : left, root, right
     vector<int> inorderIterativeTraversal(TreeNode *root) {
-        vector<int> ret;        // this will keep track of the visited nodes sequentially
-        stack<TreeNode *> stk;  // a stack that will keep the yet to process/visit nodes
-        TreeNode *curr = root;
+        vector<int> visitOrder;  // this will keep track of the visited nodes sequentially
+        stack<TreeNode *> stk;   // a stack that will keep the yet to process/visit nodes
+        TreeNode *curr = root;   // this will point to the current node
 
         while (!stk.empty() || curr != nullptr) {
-            // keep going to the left until no left is availabe
-            // add every node to the stack as those are yet to process/visit
-            while (curr != nullptr) {
+            // before processing the left subtree of any node,
+            // we need to save the node on a stack (to process the node and right subtree of that node).
+            // Then we go to the left child of that node.
+            if (curr != nullptr) {
                 stk.push(curr);
                 curr = curr->left;
             }
-            // most recently pushed node has no more left
-            // meaning we can visit it now and pop it from the stack
-            // then work with it's right subtree similarly
-            curr = stk.top();
-            stk.pop();
-            ret.push_back(curr->val);
-            curr = curr->right;
+
+            // After processing all the nodes in the left subtree,
+            // we pop the top node the stack, visit it,
+            // and go to the right child of that node to traverse the right subtree.
+            else {
+                curr = stk.top();
+                stk.pop();
+                visitOrder.push_back(curr->val);
+                curr = curr->right;
+            }
         }
-        return ret;
+        return visitOrder;
     }
 };
 
@@ -69,6 +73,6 @@ class Test {
 
 int main() {
     Test test;
-    // test.testInorderIterativeTraversal();
+    test.testInorderIterativeTraversal();
     return 0;
 }
